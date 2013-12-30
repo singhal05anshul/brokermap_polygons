@@ -1,28 +1,58 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Purpose of the application :
 
-Things you may want to cover:
+The application provides an interface for viewing regional polygons by plotting them on Google
+Maps, modifying the regions by selecting a polygon and saving these changes to reflect them back
+to the database.
 
-* Ruby version
+Development Phase Details:
 
-* System dependencies
+Requirements :
 
-* Configuration
+Operating System : CentOS release 6.5 virtual machine using VMware Player
 
-* Database creation
+Framework : Ruby on Rails (RoR)
+Ruby 1.9.3p484
+Rails 4.0.2
 
-* Database initialization
+Database Management System : PostgreSQL 9.3.2
 
-* How to run the test suite
+PostGIS 2.1 (PostgreSQL add-on which spatially enables PostgreSQL server)
 
-* Services (job queues, cache servers, search engines, etc.)
+Other Important Libraries and Ruby Gems:
 
-* Deployment instructions
+GEOS
+Proj
+Rgeo (Ruby Gem)
+activerecord-postgis-adapter (Ruby Gem)
 
-* ...
+Google Maps API v3
 
+Setting up the machine : Installing VMware and Making a CentOS 6.5 virtual machine:
 
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+Download and Install VMware player (non-commercial) from the following link :
+	https://my.vmware.com/web/vmware/free#desktop_end_user_computing/vmware_player/6_0
+Download CentOS 6.5 release .iso file from http://www.centos.org/
+	Setup the virtual machine using the .iso file.
+
+Installing Ruby on Rails with RVM (ruby version manager) :
+
+	Follow the following link : https://www.digitalocean.com/community/articles/how-to-install-ruby-on-rails-on-centos-6-with-rvm
+	*Note - Read the install notes on the terminal after installing RVM carefully.
+
+Installing PostgreSQL and PostGIS on your machine :
+
+	Follow the following link: http://www.postgresonline.com/journal/archives/203-postgresql90-yum.html ...(i)
+	OR
+	http://wiki.postgresql.org/wiki/YUM_Installation (for PostgreSQL)
+	http://www.davidghedini.com/pg/entry/postgis_2_0_on_centos( for PostGIS )
+*NOTE - Make the changes specified in link (i) in the postgresql.conf and pg_hba.conf files.
+
+Also install Pgadmin which provides an interface for handling PostgreSQL databases and tables.
+
+For Getting Started with Ruby on Rails (RoR) refer to the following guide :
+	http://guides.rubyonrails.org/getting_started.html
+	For Building a GeoSpatial Rails application read the following blog series by Daniel Azuma(writer ofRgeo)
+	 : http://blog.daniel-azuma.com/archives/60
+
