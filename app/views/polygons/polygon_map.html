@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Simple Polygon</title>
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
+    <script src='http://code.jquery.com/jquery-1.10.2.min.js'></script>
+    <!--These two scripts are for Wicket-Master for converting google geometry to WKT
+      http://arthur-e.github.com/Wicket  -->
+    <script src='http://geojam.net/static/wicket/wicket.src.js'></script>
+    <script src='http://geojam.net/static/wicket/wicket-gmap3.src.js'></script>
+    <script>
+function initialize() {
+  var mapOptions = {
+    zoom: 16,
+    center: new google.maps.LatLng(28.6100, 77.2300),
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  var map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
+  var polygonsArray = [];
+  function clearOverlays() {
+    for (var i = 0; i < polygonsArray.length; i++ ) {
+      polygonsArray[i].setMap(null);
+    }
+    polygonsArray = [];
+  }
+  var newpolygon;
+  var lat0;
+  var lat1;
+  var lng0;
+  var lng1;
+  //function for editing the polygon 
+  var addListenersOnPolygon = function(polygon) {
+    google.maps.event.addListener(polygon, 'click', function (event,polygon) {
+      self = this;
+      $.ajax({
+        type: "GET",
+        url: "http://0.0.0.0:3000/polygons/show/"+self.polyid+"/show_polygon",
+        cache: false
+      })
+      .done(function( output_data ){
+        self.setEditable(true); 
+        alert("right click after editing");
+        remote_polygon = output_data
+        google.maps.event.addListener(self, 'rightclick', function(output_data) {
+          self.setEditable(false);
+          updatePolygon(self,remote_polygon);
+        });
+        // updating the polygon
+        google.maps.event.addListener(self.getPath(), 'set_at', function() {
+        });
+
+        google.maps.event.addListener(self.getPath(), 'insert_at', function() {
+        });
+      })
+      .fail( function(){
+        alert("something went wrong");
+      });
+    });
+  }
+  // the eWicket api is used in this fn for updating the boundary of the polygon 
+  var updatePolygon = function(local,remote){
+    var wkt = new Wkt.Wkt();
+    wkt.fromObject(local);
+    remote.boundary =  wkt.write();
+    remote_params = {}    //remote_params is an object with key polygon 
+    remote_params.polygon = remote  //remote is sent as a param by the object remote_params 
+      $.ajax({
+        type: "POST",
+        url: "http://0.0.0.0:3000/polygons/update/"+self.polyid+"/update_polygon",
+        cache: false,
+	data: remote_params
+      })
+      .done(function( ){
+        })
+      .fail( function(){
+        alert("something went wrong");
+      });
+  }
+  //creating the polygons on the map according to the threshold given inside the controller 
+  google.maps.event.addListener(map,'dragend', function() 
+  {
+    clearOverlays();
+        lat0 = map.getBounds().getNorthEast().lat();
+        lng0 = map.getBounds().getNorthEast().lng();
+        lat1 = map.getBounds().getSouthWest().lat();
+        lng1 = map.getBounds().getSouthWest().lng();
+        $.ajax({
+            type: "GET",
+            url: "http://0.0.0.0:3000/polygons",
+            data: "lt0="+lat0+"&ln0="+lng0+"&lt1="+lat1+"&ln1="+lng1,
+            cache: false,
+        })
+        
+    .done(function( output_data ) {
+
+      var triangleCoords = [[]];
+      var id = [];
+      var inc = 0;
+      $.each(output_data,function(o,k){
+       triangleCoords[inc]=[]
+       id[inc] = o
+       k.forEach(function(m){
+        var point = new google.maps.LatLng( m.lat,m.lng);
+        triangleCoords[inc].push(point);
+       });
+          newpolygon = new google.maps.Polygon({
+          paths: triangleCoords[inc],
+          strokeColor: 'green',
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: 'yellow',
+          fillOpacity: 0.35,
+          polyid : id[inc],
+          editable : false
+        });
+         newpolygon.setMap(map);
+         addListenersOnPolygon(newpolygon);
+         polygonsArray.push(newpolygon);
+       inc++;
+      });
+    
+    });
+  });
+  
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+    <button type="button" id="update_polygon">Update Polygon</button>
+  </body>
+</html>

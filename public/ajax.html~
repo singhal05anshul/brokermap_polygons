@@ -1,0 +1,23 @@
+
+<script src='http://code.jquery.com/jquery-1.10.2.min.js'></script>
+<script>
+$.ajax({
+url: "http://0.0.0.0:3000/polygons",
+cache: false
+})
+.done(function( output_data ) {
+//for(var i =0;i <= output_data.length-1;i++)
+//{
+//  var item = output_data[i].boundary;
+//  alert(JSON.stringify(item));
+//}
+ var triangleCoords = [][];
+$.each(output_data,function(o,k){
+
+new google.maps.polygon,
+})
+
+})
+
+});
+</script>

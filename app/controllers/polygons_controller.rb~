@@ -1,0 +1,11 @@
+class PolygonsController < ApplicationController
+  def index
+	a = {}
+ 	@polygons = Polygon.limit(10).each{|t| a[t.id]=[] and t.boundary.exterior_ring.points.each{|k| a[t.id].push({:lat=>k.y,:lng=>k.y})}}
+        render :json=>a
+ end
+  def import
+	 Polygon.import(params[:file])
+	redirect_to root_url, notice: "Polygons imported."
+  end
+end

@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  boundary: 
+  x1: MyString
+  x2: 9.99
+  x3: 9.99
+  x4: 9.99
+  x5: 
+
+two:
+  name: MyString
+  boundary: 
+  x1: MyString
+  x2: 9.99
+  x3: 9.99
+  x4: 9.99
+  x5: 
